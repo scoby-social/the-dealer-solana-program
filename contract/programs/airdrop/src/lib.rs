@@ -1,9 +1,10 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, TokenAccount, Token, Mint};
 use anchor_lang::solana_program::{entrypoint::{ProgramResult}};
+use anchor_lang::solana_program::{clock};
 
 use crate::constants::*;
-declare_id!("5jKk2meTu2FJeXAQHec6eZumRpjuuqr4pM9AVDayf2q3");
+declare_id!("AXmUrvGJ4jahqB12kFRUS6wSauVyM2EVM7vgSP4hqMje");
 
 mod constants {
     use anchor_lang::prelude::Pubkey;
@@ -42,6 +43,8 @@ pub mod airdrop {
         token::transfer(cpi_ctx, count)?;
         list_nft.price = price;
         list_nft.amount = count;
+        let clock = clock::Clock::get().unwrap();
+        list_nft.list_time = clock.unix_timestamp as u32;
         list_nft.owner = ctx.accounts.admin.to_account_info().key();
         list_nft.address = ctx.accounts.mint.to_account_info().key();
         Ok(())
@@ -123,7 +126,7 @@ pub struct InitializeContext<'info> {
 #[derive(Accounts)]
 #[instruction(bump: u8)]
 pub struct CreateListContext<'info> {
-    #[account(init, seeds = [b"list nft".as_ref(), mint.key().as_ref()], bump, space = 8 + 32 + 32 +  8 + 8 + 1, payer = admin)]
+    #[account(init, seeds = [b"list nft".as_ref(), mint.key().as_ref()], bump, space = 8 + 32 + 32 + 8 + 8 + 4 + 1, payer = admin)]
     pub list_nft: Account<'info, ListNft>,
     #[account(mut)]
     pub admin: Signer<'info>,
@@ -186,5 +189,6 @@ pub struct ListNft {
     pub owner: Pubkey,
     pub price: u64,
     pub amount: u64,
+    pub list_time: u32,
     pub bump: u8
 }

@@ -62,10 +62,9 @@ const Marketplace: React.FC = () => {
       } catch(e) {
         console.log(e)
       }
-      console.log(listNFtData)
       axios.get(nft.data.uri)
       .then(res => {
-        k.push({...res.data, ...nft, owner: listNFtData.owner, price:  listNFtData?.price.toNumber() / 10**6, amount: listNFtData?.amount.toNumber() })
+        k.push({...res.data, ...nft, listTime: listNFtData.listTime ,  owner: listNFtData.owner, price:  listNFtData?.price.toNumber() / 10**6, amount: listNFtData?.amount.toNumber() })
         setList([...k])
       })
       .catch(e => {
@@ -74,7 +73,7 @@ const Marketplace: React.FC = () => {
     }
     setLoading(false);
   }
-  
+  console.log(list)
   useEffect(() => {
     if (!wallet) {
       addToast("Please connect wallet", {
@@ -172,6 +171,7 @@ const Marketplace: React.FC = () => {
             <section>
               <span>{item.data.name} / {item.amount}</span>
               <span>{item.price} USDC</span>
+              <span>{ new Date(item.listTime * 1000).toString()}</span>
               <span>Owner: {item.owner.toBase58()}</span>
               <span>
                 <input 

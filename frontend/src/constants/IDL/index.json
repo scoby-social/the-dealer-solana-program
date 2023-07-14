@@ -255,6 +255,10 @@
             "type": "u64"
           },
           {
+            "name": "listTime",
+            "type": "u32"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
